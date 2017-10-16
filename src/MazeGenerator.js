@@ -1,10 +1,9 @@
 import { randRange } from './utils';
+import { SVG_NS_URI } from './constants';
 
 const DEFAULT_LINE_WIDTH = 5,
       DEFAULT_WALL_COLOR = 'black',
       DEFAULT_PATH_COLOR = 'white';
-
-const SVG_NS_URI = 'http://www.w3.org/2000/svg';
 
 /**
  * Class representing maze generator.
@@ -38,8 +37,8 @@ export default class MazeGenerator {
    * Generates maze as a 2D array using depth-first algorithm.
    * @param {number} width - Total number of columns in the array.
    * @param {number} height - Total number of rows in the array.
-   * @returns {array<array<boolean>>} - 2d array where "true" cells are
-   *                                    walls and "false" cells are paths.
+   * @returns {object} - start cell, end cell and 2d array where
+   *                     "true" cells are walls and "false" cells are paths.
    */
   generateArray(width, height) {
     if (!width || !height) {
@@ -207,15 +206,19 @@ export default class MazeGenerator {
       }
     }
 
-    return calcMaze.map((row) => {
-      return row.map((cell) => {
-        return cell.isWall;
-      });
-    });
+    return {
+      from: entrance,
+      to: exit,
+      maze: calcMaze.map((row) => {
+        return row.map((cell) => {
+          return cell.isWall;
+        });
+      })
+    };
   }
 
   /**
-   * Generates maze using SVG in the given <div>.
+   * Generates maze using SVG and appends it to the given <div>.
    * @param {HTMLElement} div - Root element of the future maze.
    * @param {number} width - Maze's width in pixels.
    * @param {number} height - Maze's height in pixels.
@@ -223,6 +226,8 @@ export default class MazeGenerator {
    * @param {number} options.lineWidth - Maze's walls and paths width.
    * @param {string} options.wallColor - Maze's walls' color.
    * @param {string} options.pathColor - Maze's paths' color.
+   * @returns {object} - Start cell, end cell and 2d array where
+   *                     "true" cells are walls and "false" cells are paths.
    */
   generateSVG(div, width, height, options) {
     if (!div) {
@@ -246,7 +251,7 @@ export default class MazeGenerator {
     const cols = width / this.lineWidth;
 
     // calculate the maze
-    const maze = this.generateArray(cols, rows);
+    const result = this.generateArray(cols, rows);
 
     // create the wall sample
     const wallSample = document.createElementNS(SVG_NS_URI, 'rect');
@@ -257,7 +262,7 @@ export default class MazeGenerator {
     // fill the field
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < cols; j++) {
-        if (!maze[i][j]) {
+        if (!result.maze[i][j]) {
           continue;
         }
         const tile = wallSample.cloneNode(true);
@@ -268,6 +273,8 @@ export default class MazeGenerator {
     }
 
     div.appendChild(root);
+
+    return result;
   }
 
   generateCanvas() {

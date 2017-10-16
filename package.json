@@ -26,6 +26,7 @@
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
     "style-loader": "^0.19.0",
-    "webpack": "^3.5.5"
+    "webpack": "^3.5.5",
+    "visual-path-finding": "Dyasik/visual-path-finding"
   }
 }
