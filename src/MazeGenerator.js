@@ -17,7 +17,7 @@ export default class MazeGenerator {
    * @param {string} options.pathColor - Maze's paths' color.
    */
   constructor(options) {
-    this.configure(options);
+    // this.configure(options);
   }
 
   /**
@@ -28,9 +28,9 @@ export default class MazeGenerator {
    * @param {string} options.pathColor - Maze's paths' color.
    */
   configure(options) {
-    this.lineWidth = options.lineWidth || DEFAULT_LINE_WIDTH;
-    this.wallColor = options.wallColor || DEFAULT_WALL_COLOR;
-    this.pathColor = options.pathColor || DEFAULT_PATH_COLOR;
+    // this.lineWidth = options.lineWidth || DEFAULT_LINE_WIDTH;
+    // this.wallColor = options.wallColor || DEFAULT_WALL_COLOR;
+    // this.pathColor = options.pathColor || DEFAULT_PATH_COLOR;
   }
 
   /**
@@ -78,8 +78,10 @@ export default class MazeGenerator {
       } else if (length > perimeter - 2*height - width + 2) {
         // entrance or exit is on the right side;
         // adjust the row so that it's not in the wall row
-        let tempRow = length - height + 1;
-        if (tempRow % 2 === 0) {
+        let tempRow = length - width + 1;
+        if (tempRow === 0) {
+          tempRow = 1;
+        } else if (tempRow % 2 === 0) {
           tempRow--;
         }
         return {
@@ -101,9 +103,11 @@ export default class MazeGenerator {
     };
 
     // randomly define the entrance and exit cells
-    const entrance = getCellByPerimeterPathLength(randRange(perimeter / 2));
+    const entrance = getCellByPerimeterPathLength(
+      randRange(Math.floor(perimeter / 2))
+    );
     const exit = getCellByPerimeterPathLength(
-      randRange(perimeter / 2, perimeter)
+      randRange(Math.floor(perimeter / 2), perimeter)
     );
 
     // create array for calculations

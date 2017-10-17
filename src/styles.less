@@ -1,15 +1,23 @@
 @main_background: dimgray;
 @buttons_background: #252525;
 
+html, body {
+  padding: 0;
+  margin: 0;
+}
+
 body {
   background-color: @main_background;
+}
+
+.head {
+  padding: 10px 15px;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: space-between;
 }
 
 .buttons {
-  margin-top: 15px;
 
   button {
     width: 150px;
@@ -21,7 +29,6 @@ body {
     background-color: @buttons_background;
     border-color: black;
     cursor: pointer;
-    margin-top: 20px;
 
     &:hover {
       background-color: @buttons_background + #222;

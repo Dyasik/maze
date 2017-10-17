@@ -9,12 +9,12 @@
     "watch": "webpack --colors --watch"
   },
   "author": "D. Seletkov",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/Dyasik/maze.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dyasik/maze.git"
   },
   "bugs": {
-    "url" : "https://github.com/Dyasik/maze/issues"
+    "url": "https://github.com/Dyasik/maze/issues"
   },
   "license": "ISC",
   "dependencies": {
@@ -25,8 +25,11 @@
     "css-loader": "^0.28.7",
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
+    "prop-types": "^15.6.0",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
     "style-loader": "^0.19.0",
-    "webpack": "^3.5.5",
-    "visual-path-finding": "Dyasik/visual-path-finding"
+    "visual-path-finding": "Dyasik/visual-path-finding",
+    "webpack": "^3.5.5"
   }
 }
