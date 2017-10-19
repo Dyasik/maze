@@ -64,7 +64,7 @@ export default class MazeGenerator {
           row: tempRow,
           col: 0
         }
-      } else if (length > perimeter - height - width + 1) {
+      } else if (length > perimeter - height - width + 2) {
         // entrance or exit is on the bottom side;
         // adjust the column so that it's not in the wall column
         let tempCol = perimeter - height - length + 1;

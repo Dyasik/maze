@@ -45,9 +45,16 @@ export default class App extends React.Component {
     map[from.row][from.col].type = PathfindingConstants.TILE_TYPE.START;
     map[to.row][to.col].type = PathfindingConstants.TILE_TYPE.TARGET;
 
-    this.setState({
-      pathCells: aStar(from.row + ',' + from.col, to.row + ',' + to.col, map)
-    });
+    const path = aStar(from.row + ',' + from.col, to.row + ',' + to.col, map);
+    let i = 1;
+    const int = setInterval((app) => {
+      app.setState({
+        pathCells: path.slice(0, i),
+      });
+      if (i++ === path.length) {
+        clearInterval(int);
+      }
+    }, 20, this);
   }
 
   handleRegenerate() {
