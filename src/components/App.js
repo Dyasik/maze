@@ -12,7 +12,9 @@ const FIELD = {
   LINE_WIDTH: 10,
   WALL_COLOR: 'black',
   PATH_COLOR: 'white',
-  FOUND_PATH_COLOR: 'royalblue',
+  FOUND_PATH_COLOR: 'blue',
+  OPEN_PATH_COLOR: 'royalblue',
+  CLOSED_PATH_COLOR: 'blueviolet',
 };
 
 export default class App extends React.Component {
@@ -27,6 +29,8 @@ export default class App extends React.Component {
     this.state = {
       ...this.mazeGenerator.generateArray(FIELD.WIDTH, FIELD.HEIGHT),
       pathCells: [],
+      openCells: [],
+      closedCells: [],
     };
   }
 
@@ -45,22 +49,37 @@ export default class App extends React.Component {
     map[from.row][from.col].type = PathfindingConstants.TILE_TYPE.START;
     map[to.row][to.col].type = PathfindingConstants.TILE_TYPE.TARGET;
 
-    const path = aStar(from.row + ',' + from.col, to.row + ',' + to.col, map);
-    let i = 1;
-    const int = setInterval((app) => {
-      app.setState({
-        pathCells: path.slice(0, i),
-      });
-      if (i++ === path.length) {
-        clearInterval(int);
+    const cellsBuffer = [];
+
+    const path = aStar(from.row + ',' + from.col, to.row + ',' + to.col, map,
+      (openCells, closedCells) => {
+        cellsBuffer.push({
+          openCells: [...openCells],
+          closedCells: [...closedCells],
+        });
       }
-    }, 20, this);
+    );
+    const int = setInterval(() => {
+      if (!cellsBuffer.length) {
+        this.setState({
+          pathCells: path,
+        });
+        clearInterval(int);
+        return;
+      }
+      const bufferData = cellsBuffer.shift();
+      this.setState({
+        ...bufferData,
+      });
+    }, 10);
   }
 
   handleRegenerate() {
     this.setState({
       ...this.mazeGenerator.generateArray(FIELD.WIDTH, FIELD.HEIGHT),
       pathCells: [],
+      openCells: [],
+      closedCells: [],
     });
   }
 
@@ -84,7 +103,7 @@ export default class App extends React.Component {
           continue;
         }
         cells.push(
-          <Tile key={i + ',' + j}
+          <Tile key={'wall:' + i + ',' + j}
                 width={FIELD.LINE_WIDTH}
                 height={FIELD.LINE_WIDTH}
                 left={j * FIELD.LINE_WIDTH}
@@ -93,12 +112,40 @@ export default class App extends React.Component {
         );
       }
     }
+    // open tiles
+    if (this.state.openCells && this.state.openCells.length) {
+      this.state.openCells.forEach((cell) => {
+        const [i, j] = cell.split(',');
+        cells.push(
+          <Tile key={'opened:' + i + ',' + j}
+                width={FIELD.LINE_WIDTH}
+                height={FIELD.LINE_WIDTH}
+                left={j * FIELD.LINE_WIDTH}
+                top={i * FIELD.LINE_WIDTH}
+                color={FIELD.OPEN_PATH_COLOR}/>
+        );
+      });
+    }
+    // closed tiles
+    if (this.state.closedCells && this.state.closedCells.length) {
+      this.state.closedCells.forEach((cell) => {
+        const [i, j] = cell.split(',');
+        cells.push(
+          <Tile key={'closed:' + i + ',' + j}
+                width={FIELD.LINE_WIDTH}
+                height={FIELD.LINE_WIDTH}
+                left={j * FIELD.LINE_WIDTH}
+                top={i * FIELD.LINE_WIDTH}
+                color={FIELD.CLOSED_PATH_COLOR}/>
+        );
+      });
+    }
     // path
     if (this.state.pathCells && this.state.pathCells.length) {
       this.state.pathCells.forEach((cell) => {
         const [i, j] = cell.split(',');
         cells.push(
-          <Tile key={i + ',' + j}
+          <Tile key={'path:' + i + ',' + j}
                 width={FIELD.LINE_WIDTH}
                 height={FIELD.LINE_WIDTH}
                 left={j * FIELD.LINE_WIDTH}
